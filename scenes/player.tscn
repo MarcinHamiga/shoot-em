@@ -131,12 +131,12 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bm8g2"]
-radius = 7.0
-height = 20.0
+radius = 6.0
+height = 18.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6lhjo"]
-radius = 7.0
-height = 20.0
+radius = 5.0
+height = 16.0
 
 [node name="PlayerBody" type="CharacterBody2D" groups=["player"]]
 slide_on_ceiling = false
