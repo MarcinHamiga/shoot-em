@@ -7,16 +7,19 @@ extends Node
 @onready var spawn_points = $SpawnPoints
 
 var score: int = 0
+var starting_new_game: bool = false
+
+@export var spawn_interval: float = 2.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	randomize()
 	self.player.activate_camera()
+	self.spawn_timer.wait_time = spawn_interval
 	self.spawn_timer.start()
 	GameEvents.enemy_killed.connect(self._on_enemy_killed)
 	GameEvents.game_over.connect(self._on_game_over)
-	
-	
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -34,16 +37,27 @@ func _on_spawn_timer_timeout() -> void:
 func new_game() -> void:
 	var children = self.entites.get_children()
 	for child in children:
-		child.queue_free()
-	var player = load("res://scenes/player.tscn").instantiate()
-	self.entites.add_child(player)
-	player.position = Vector2(256, 256)
+		child.call_deferred("queue_free")
+	self.call_deferred("_add_player")
+	self.score = 0
+	self.score_label.text = "Score: %s" % [self.score]
 	self.spawn_timer.stop()
 	self.spawn_timer.start()
+	self.starting_new_game = false
+
+
+
+func _add_player() -> void:
+	var player = load("res://scenes/player.tscn").instantiate()
+	self.player = player
+	self.entites.add_child(player)
+	player.position = Vector2(256, 256)
 
 
 func _on_game_over() -> void:
-	self.new_game()
+	if not self.starting_new_game:
+		self.starting_new_game = true
+		call_deferred("new_game")
 
 
 func _on_enemy_killed(enemy, bullet) -> void:

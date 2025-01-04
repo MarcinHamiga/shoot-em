@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 
-const SPEED = 80.0
+const SPEED = 95.0
 var target: CharacterBody2D
 
 
@@ -18,4 +18,6 @@ func setup(player: CharacterBody2D) -> void:
 func _on_area_body_entered(body: Node2D) -> void:
 	var body_groups = body.get_groups()
 	if "bullet" in body_groups:
+		body.set_physics_process(false)
+		self.set_physics_process(false)
 		GameEvents.enemy_killed.emit(self, body)

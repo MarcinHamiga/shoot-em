@@ -139,8 +139,9 @@ radius = 7.0
 height = 20.0
 
 [node name="PlayerBody" type="CharacterBody2D" groups=["player"]]
+slide_on_ceiling = false
 script = ExtResource("1_crpfp")
-speed = 90.0
+fire_rate = 0.5
 
 [node name="PlayerSprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_g6xcv")

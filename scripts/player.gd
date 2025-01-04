@@ -6,7 +6,7 @@ extends CharacterBody2D
 @onready var shoot_timer: Timer = $ShootTimer
 
 @export var fire_rate: float = 0.2
-@export var speed: float = 200.0
+@export var speed: float = 90.0
 var facing: Vector2 = Vector2(0, 1)
 
 var can_shoot: bool = true
