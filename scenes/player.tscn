@@ -1,0 +1,165 @@
+[gd_scene load_steps=18 format=3 uid="uid://djmxw7ssv3rgs"]
+
+[ext_resource type="Texture2D" uid="uid://w0pwi0n1vbpu" path="res://sprites/Sprite-0001.png" id="1_38uda"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_crpfp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_45ap2"]
+atlas = ExtResource("1_38uda")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y4vun"]
+atlas = ExtResource("1_38uda")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_whehl"]
+atlas = ExtResource("1_38uda")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kt706"]
+atlas = ExtResource("1_38uda")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_td6rn"]
+atlas = ExtResource("1_38uda")
+region = Rect2(16, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pu2yu"]
+atlas = ExtResource("1_38uda")
+region = Rect2(32, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_30iul"]
+atlas = ExtResource("1_38uda")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6jhjx"]
+atlas = ExtResource("1_38uda")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_il3f2"]
+atlas = ExtResource("1_38uda")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d3mft"]
+atlas = ExtResource("1_38uda")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ht88"]
+atlas = ExtResource("1_38uda")
+region = Rect2(16, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_syt80"]
+atlas = ExtResource("1_38uda")
+region = Rect2(32, 48, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g6xcv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_45ap2")
+}],
+"loop": true,
+"name": &"stand_back",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y4vun")
+}],
+"loop": true,
+"name": &"stand_front",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_whehl")
+}],
+"loop": true,
+"name": &"stand_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kt706")
+}],
+"loop": true,
+"name": &"stand_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_td6rn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pu2yu")
+}],
+"loop": true,
+"name": &"walk_back",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_30iul")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6jhjx")
+}],
+"loop": true,
+"name": &"walk_front",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_il3f2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d3mft")
+}],
+"loop": true,
+"name": &"walk_left",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ht88")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_syt80")
+}],
+"loop": true,
+"name": &"walk_right",
+"speed": 4.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bm8g2"]
+radius = 7.0
+height = 20.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6lhjo"]
+radius = 7.0
+height = 20.0
+
+[node name="PlayerBody" type="CharacterBody2D" groups=["player"]]
+script = ExtResource("1_crpfp")
+speed = 90.0
+
+[node name="PlayerSprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_g6xcv")
+animation = &"walk_left"
+frame_progress = 0.126942
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_bm8g2")
+
+[node name="Camera" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+
+[node name="Area" type="Area2D" parent="."]
+collision_mask = 4
+
+[node name="AreaShape" type="CollisionShape2D" parent="Area"]
+shape = SubResource("CapsuleShape2D_6lhjo")
+
+[node name="ShootTimer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="Area" to="." method="_on_area_body_entered"]
+[connection signal="timeout" from="ShootTimer" to="." method="_on_shoot_timer_timeout"]
