@@ -10,14 +10,14 @@ config_version=5
 
 [application]
 
-config/name="Shoot Em"
+config/name="Shoot-em-mono"
 run/main_scene="res://scenes/game.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.3", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameEvents="*res://scripts/game_events.gd"
+GameEvents="*res://scripts/GameEvents.cs"
 
 [display]
 
@@ -27,6 +27,10 @@ window/size/mode=2
 window/size/borderless=true
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
+
+[dotnet]
+
+project/assembly_name="Shoot-em-mono"
 
 [global_group]
 

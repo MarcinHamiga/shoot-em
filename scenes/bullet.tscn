@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://1xetj1xyd4jj"]
 
-[ext_resource type="Script" path="res://scripts/bullet.gd" id="1_v8ncg"]
+[ext_resource type="Script" path="res://scripts/Bullet.cs" id="1_xk72y"]
 [ext_resource type="Texture2D" uid="uid://c3spyid4vie3i" path="res://sprites/bullet.png" id="2_kmfaf"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t317b"]
@@ -10,7 +10,8 @@ height = 8.0
 [node name="Bullet" type="CharacterBody2D" groups=["bullet"]]
 collision_layer = 2
 collision_mask = 0
-script = ExtResource("1_v8ncg")
+script = ExtResource("1_xk72y")
+DespawnInNSeconds = 1.75
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2_kmfaf")
