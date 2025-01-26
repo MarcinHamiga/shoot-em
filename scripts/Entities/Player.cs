@@ -19,7 +19,7 @@ public partial class Player : CharacterBody2D
 	private Vector2 _facing = Vector2.Down;
 	private bool _canShoot = true;
 	private bool _isShooting = false;
-	private Node _gameEvents;
+	private GameEvents _gameEvents;
 
 	public override void _Ready() 
 	{
@@ -33,7 +33,7 @@ public partial class Player : CharacterBody2D
 
 		_shootTimer.Timeout += _OnShootTimerTimeout;
 		_collisionArea.BodyEntered += _OnAreaBodyEntered;
-		_gameEvents = GetNode<Node>("/root/GameEvents");
+		_gameEvents = GetNode<GameEvents>("/root/GameEvents");
 	}
 
 	public override void _Input(InputEvent @event)
@@ -147,7 +147,7 @@ public partial class Player : CharacterBody2D
 		GD.Print("Enemy entered the player");
 		if (body.GetGroups().Contains("enemy"))
 		{
-			_gameEvents.EmitSignal("game_over");
+			_gameEvents.EmitSignal("GameOver");
 		}
 	}
 
