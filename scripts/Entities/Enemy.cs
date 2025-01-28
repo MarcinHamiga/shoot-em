@@ -7,11 +7,9 @@ public partial class Enemy : CharacterBody2D
     const float SPEED = 95.0f;
     private Player _target;
     private Area2D _area;
-    private GameEvents _gameEvents;
 
     public override void _Ready()
     {
-        _gameEvents = GetNode<GameEvents>("/root/GameEvents");
         _area = GetNode<Area2D>("Area");
         _area.BodyEntered += OnAreaBodyEntered;
     }
@@ -35,7 +33,7 @@ public partial class Enemy : CharacterBody2D
         {
             body.SetPhysicsProcess(false);
             SetPhysicsProcess(false);
-            _gameEvents.EmitSignal("EnemyKilled", this, body);
+            GameEvents.Instance.EmitEnemyKilled(this, body as Bullet);
         }
     }
 }

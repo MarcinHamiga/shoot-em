@@ -22,7 +22,7 @@ public partial class Game : Node
         _spawnTimer = GetNode<Timer>("SpawnTimer");
         _entities = GetNode<Node>("Entities");
         _player = GetNode<Player>("Entities/PlayerBody");
-        _scoreLabel = GetNode<Label>("UI/Score");
+        _scoreLabel = GetNode<Label>("UI/UIMargin/Score");
         _spawnPoints = GetNode<Node>("SpawnPoints");
 
         _player.ActivateCamera();

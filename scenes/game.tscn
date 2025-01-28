@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=4 uid="uid://c2povapuqycqq"]
+[gd_scene load_steps=6 format=4 uid="uid://c2povapuqycqq"]
 
 [ext_resource type="Script" path="res://scripts/Game.cs" id="1_03akm"]
 [ext_resource type="PackedScene" uid="uid://djmxw7ssv3rgs" path="res://scenes/player.tscn" id="1_ilku3"]
 [ext_resource type="TileSet" uid="uid://c1abdqpy7f7ka" path="res://main_tileset.tres" id="2_oduo2"]
 [ext_resource type="PackedScene" uid="uid://dvibke3kbjgd0" path="res://scenes/spawner.tscn" id="3_ife62"]
+[ext_resource type="FontFile" uid="uid://bjdj1bs2dh6hc" path="res://fonts/Tiny5-Regular.ttf" id="5_ntacn"]
 
 [node name="Game" type="Node"]
 script = ExtResource("1_03akm")
@@ -41,9 +42,24 @@ position = Vector2(256, 256)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="Score" type="Label" parent="UI"]
-offset_right = 40.0
-offset_bottom = 23.0
+[node name="UIMargin" type="MarginContainer" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Score" type="Label" parent="UI/UIMargin"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("5_ntacn")
 text = "Score: 0"
 
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]

@@ -10,30 +10,41 @@ public partial class Player : CharacterBody2D
 	[Export]
 	public float Speed { get; set; } = 90.0f;
 
+	[Export]
+	public float MaxHealth = 100.0f;
+	public float Health;
+	private float RegenRate = 5.0f;
+
 	private AnimatedSprite2D _playerSprite;
 	private CollisionShape2D _collisionShape;
 	private Area2D _collisionArea;
 	private Camera2D _camera;
 	private Timer _shootTimer;
-
+	private ProgressBar _healthBar;
+	private Timer _regenerateTimer;
 	private Vector2 _facing = Vector2.Down;
 	private bool _canShoot = true;
 	private bool _isShooting = false;
-	private GameEvents _gameEvents;
 
 	public override void _Ready() 
 	{
+		GD.Randomize();
+		Health = MaxHealth;
 		_playerSprite = GetNode<AnimatedSprite2D>("PlayerSprite");
 		_collisionShape = GetNode<CollisionShape2D>("Shape");
 		_camera = GetNode<Camera2D>("Camera");
 		_shootTimer = GetNode<Timer>("ShootTimer");
 		_collisionArea = GetNode<Area2D>("Area");
-
+		_healthBar = GetNode<ProgressBar>("HealthBar");
+		_regenerateTimer = GetNode<Timer>("RegenerateTimer");
+		
+		_healthBar.Visible = false;
 		_shootTimer.WaitTime = FireRate;
+		
 
 		_shootTimer.Timeout += _OnShootTimerTimeout;
+		_regenerateTimer.Timeout += _OnRegenerateTimerTimeout;
 		_collisionArea.BodyEntered += _OnAreaBodyEntered;
-		_gameEvents = GetNode<GameEvents>("/root/GameEvents");
 	}
 
 	public override void _Input(InputEvent @event)
@@ -147,12 +158,40 @@ public partial class Player : CharacterBody2D
 		GD.Print("Enemy entered the player");
 		if (body.GetGroups().Contains("enemy"))
 		{
-			_gameEvents.EmitSignal("GameOver");
+			if (Health <= 0) GameEvents.Instance.EmitGameOver();
+			else
+			{
+				Health -= 10;
+				if (Health <= 0)
+				{
+					GameEvents.Instance.EmitGameOver();
+					return;
+				}
+				_healthBar.Visible = true;
+				_healthBar.Value = Health / MaxHealth * 100;
+				_regenerateTimer.Start();
+				body.QueueFree();
+			}
 		}
 	}
 
 	public void ActivateCamera()
 	{
 		_camera.MakeCurrent();
+	}
+
+	private void _OnRegenerateTimerTimeout()
+	{
+		Health += RegenRate;
+		if (Health < MaxHealth)
+		{
+			_regenerateTimer.Start();
+			_healthBar.Value = Health / MaxHealth * 100;
+		}
+		else
+		{
+			Health = MaxHealth;
+			_healthBar.Visible = false;
+		}
 	}
 }
