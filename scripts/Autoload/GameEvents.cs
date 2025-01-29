@@ -1,6 +1,7 @@
 using Godot;
+using Shootemmono.scripts.Entities;
 
-namespace shootem;
+namespace Shootemmono.scripts.Autoload;
 
 [GlobalClass]
 public partial class GameEvents : Node
@@ -15,11 +16,11 @@ public partial class GameEvents : Node
     }
 
     [Signal]
-    public delegate void EnemyKilledEventHandler(Enemy enemy, Bullet bullet);
+    public delegate void EnemyKilledEventHandler(Ghost ghost, Bullet bullet);
 
-    public void EmitEnemyKilled(Enemy enemy, Bullet bullet)
+    public void EmitEnemyKilled(Ghost ghost, Bullet bullet)
     {
-        EmitSignal(SignalName.EnemyKilled, enemy, bullet);
+        EmitSignal(SignalName.EnemyKilled, ghost, bullet);
     }
 
     public override void _EnterTree()

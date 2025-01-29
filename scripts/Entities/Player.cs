@@ -1,7 +1,6 @@
 using Godot;
-using System;
 
-namespace shootem;
+namespace Shootemmono.scripts.Entities;
 public partial class Player : CharacterBody2D
 {
 	[Export]
@@ -12,8 +11,19 @@ public partial class Player : CharacterBody2D
 
 	[Export]
 	public float MaxHealth = 100.0f;
-	public float Health;
-	private float RegenRate = 5.0f;
+	
+	[Export]
+	public float RegenRate = 2.0f;
+	private float _health;
+
+	[Export] 
+	public float DashCooldown = 3.0f;
+
+	[Export] public float DashSpeedMultiplier = 3.0f;
+
+	[Export] public float DashDuration = 0.5f;
+
+	private bool _canDash = true;
 
 	private AnimatedSprite2D _playerSprite;
 	private CollisionShape2D _collisionShape;
@@ -21,30 +31,37 @@ public partial class Player : CharacterBody2D
 	private Camera2D _camera;
 	private Timer _shootTimer;
 	private ProgressBar _healthBar;
-	private Timer _regenerateTimer;
 	private Vector2 _facing = Vector2.Down;
 	private bool _canShoot = true;
 	private bool _isShooting = false;
+	private Timer _dashTimer;
+	private Timer _dashCooldownTimer;
 
 	public override void _Ready() 
 	{
 		GD.Randomize();
-		Health = MaxHealth;
+		_health = MaxHealth;
 		_playerSprite = GetNode<AnimatedSprite2D>("PlayerSprite");
 		_collisionShape = GetNode<CollisionShape2D>("Shape");
 		_camera = GetNode<Camera2D>("Camera");
 		_shootTimer = GetNode<Timer>("ShootTimer");
 		_collisionArea = GetNode<Area2D>("Area");
 		_healthBar = GetNode<ProgressBar>("HealthBar");
-		_regenerateTimer = GetNode<Timer>("RegenerateTimer");
 		
 		_healthBar.Visible = false;
 		_shootTimer.WaitTime = FireRate;
 		
 
 		_shootTimer.Timeout += _OnShootTimerTimeout;
-		_regenerateTimer.Timeout += _OnRegenerateTimerTimeout;
 		_collisionArea.BodyEntered += _OnAreaBodyEntered;
+		_dashTimer = GetNode<Timer>("DashTimer");
+		_dashTimer.WaitTime = DashDuration;
+		_dashTimer.Timeout += ResetDash;
+		_dashTimer.OneShot = true;
+		_dashCooldownTimer = GetNode<Timer>("DashCooldownTimer");
+		_dashCooldownTimer.WaitTime = DashCooldown;
+		_dashCooldownTimer.OneShot = true;
+		_dashCooldownTimer.Timeout += ResetDashCooldown;
 	}
 
 	public override void _Input(InputEvent @event)
@@ -61,6 +78,11 @@ public partial class Player : CharacterBody2D
 		else if (@event.IsActionReleased("shoot"))
 		{
 			_isShooting = false;
+		}
+
+		if (@event.IsActionPressed("dash"))
+		{
+			if (_canDash) Dash();
 		}
 	}
 
@@ -136,11 +158,11 @@ public partial class Player : CharacterBody2D
 		PackedScene bulletScene = GD.Load<PackedScene>("res://scenes/bullet.tscn");
 		if (bulletScene == null) return;
 
-		Bullet bullet = bulletScene.Instantiate<Bullet>();
+		Shootemmono.scripts.Entities.Bullet bullet = bulletScene.Instantiate<Shootemmono.scripts.Entities.Bullet>();
 		GetParent().AddChild(bullet);
 
 		bullet.GlobalPosition = GlobalPosition + (new Vector2(8, 8) * direction);
-		bullet.Setup(direction, Speed);
+		bullet.Setup(direction, Speed, this);
 	}
 
 	private void _OnShootTimerTimeout()
@@ -155,21 +177,20 @@ public partial class Player : CharacterBody2D
 
 	private void _OnAreaBodyEntered(Node2D body)
 	{
-		GD.Print("Enemy entered the player");
+		// GD.Print("Enemy entered the player");
 		if (body.GetGroups().Contains("enemy"))
 		{
-			if (Health <= 0) GameEvents.Instance.EmitGameOver();
+			if (_health <= 0) Shootemmono.scripts.Autoload.GameEvents.Instance.EmitGameOver();
 			else
 			{
-				Health -= 10;
-				if (Health <= 0)
+				_health -= 10;
+				if (_health <= 0)
 				{
-					GameEvents.Instance.EmitGameOver();
+					Shootemmono.scripts.Autoload.GameEvents.Instance.EmitGameOver();
 					return;
 				}
 				_healthBar.Visible = true;
-				_healthBar.Value = Health / MaxHealth * 100;
-				_regenerateTimer.Start();
+				_healthBar.Value = _health / MaxHealth * 100;
 				body.QueueFree();
 			}
 		}
@@ -180,18 +201,38 @@ public partial class Player : CharacterBody2D
 		_camera.MakeCurrent();
 	}
 
-	private void _OnRegenerateTimerTimeout()
+	public void Heal()
 	{
-		Health += RegenRate;
-		if (Health < MaxHealth)
+		_health += RegenRate;
+		if (_health < MaxHealth)
 		{
-			_regenerateTimer.Start();
-			_healthBar.Value = Health / MaxHealth * 100;
+			_healthBar.Value = _health / MaxHealth * 100;
 		}
 		else
 		{
-			Health = MaxHealth;
+			_health = MaxHealth;
 			_healthBar.Visible = false;
 		}
+	}
+
+	private void Dash()
+	{
+		GD.Print("Dashed");
+		Speed *= DashSpeedMultiplier;
+		_canDash = false;
+		_dashTimer.Start();
+	}
+
+	private void ResetDash()
+	{
+		GD.Print("Dash Reset");
+		Speed /= DashSpeedMultiplier;
+		_dashCooldownTimer.Start();
+	}
+
+	private void ResetDashCooldown()
+	{
+		GD.Print("Cooldown Reset");
+		_canDash = true;
 	}
 }

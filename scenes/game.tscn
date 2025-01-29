@@ -8,7 +8,7 @@
 
 [node name="Game" type="Node"]
 script = ExtResource("1_03akm")
-SpawnInterval = 0.9
+SpawnInterval = 0.65
 
 [node name="SpawnTimer" type="Timer" parent="."]
 wait_time = 2.5
@@ -34,6 +34,18 @@ position = Vector2(32, 480)
 
 [node name="Spawner4" parent="SpawnPoints" instance=ExtResource("3_ife62")]
 position = Vector2(480, 480)
+
+[node name="Spawner5" parent="SpawnPoints" instance=ExtResource("3_ife62")]
+position = Vector2(256, 32)
+
+[node name="Spawner6" parent="SpawnPoints" instance=ExtResource("3_ife62")]
+position = Vector2(256, 480)
+
+[node name="Spawner7" parent="SpawnPoints" instance=ExtResource("3_ife62")]
+position = Vector2(32, 256)
+
+[node name="Spawner8" parent="SpawnPoints" instance=ExtResource("3_ife62")]
+position = Vector2(480, 256)
 
 [node name="Entities" type="Node" parent="."]
 

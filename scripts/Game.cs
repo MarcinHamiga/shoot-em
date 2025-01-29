@@ -1,7 +1,8 @@
 using Godot;
-using Godot.Collections;
+using Shootemmono.scripts.Entities;
+using Shootemmono.scripts.Autoload;
 
-namespace shootem;
+namespace Shootemmono.scripts;
 public partial class Game : Node
 {
     [Export]
@@ -12,8 +13,8 @@ public partial class Game : Node
     private Label _scoreLabel;
     private Node _spawnPoints;
 
-    private int _score = 0;
-    private bool _startingNewGame = false;
+    private int _score;
+    private bool _startingNewGame;
     private GameEvents _gameEvents;
     public override void _Ready()
     {
@@ -37,14 +38,12 @@ public partial class Game : Node
 
     private void _OnSpawnTimerTimeout()
     {
-        Array<Node> spawners = _spawnPoints.GetChildren();
-        int randomIndex = GD.RandRange(0, spawners.Count - 1);
+        var spawners = _spawnPoints.GetChildren();
+        var randomIndex = GD.RandRange(0, spawners.Count - 1);
 
-        if (spawners[randomIndex] is Spawner spawner)
-        {
-            spawner.Spawn(_entities, _player);
-            _spawnTimer.Start();
-        }
+        if (spawners[randomIndex] is not Spawner spawner) return;
+        spawner.Spawn(_entities, _player);
+        _spawnTimer.Start();
     }
 
     private void NewGame()
@@ -79,12 +78,12 @@ public partial class Game : Node
         }
     }
 
-    private void _OnEnemyKilled(Enemy enemy, Bullet bullet)
+    private void _OnEnemyKilled(Ghost ghost, Bullet bullet)
     {
         _score += 10;
         _scoreLabel.Text = $"Score: {_score}";
         bullet.QueueFree();
-        enemy.QueueFree();
+        ghost.QueueFree();
     }
 
 }

@@ -1,20 +1,20 @@
 using Godot;
 
-namespace shootem;
+namespace Shootemmono.scripts.Entities;
 public partial class Spawner : Node2D
 {
-    private PackedScene _enemyScene = GD.Load<PackedScene>("res://scenes/enemy.tscn");
+    private PackedScene _enemyScene = GD.Load<PackedScene>("res://scenes/ghost.tscn");
 
     public void Spawn(Node parent, CharacterBody2D target)
     {
-        GD.Print("Spawning enemy");
-        Enemy newEnemy = _enemyScene.Instantiate<Enemy>();
-        parent.AddChild(newEnemy);
+        // GD.Print("Spawning enemy");
+        Ghost newGhost = _enemyScene.Instantiate<Ghost>();
+        parent.AddChild(newGhost);
 
         if (target is Player playerTarget)
         {
-            newEnemy.Setup(playerTarget);
-            newEnemy.Position = Position;
+            newGhost.Setup(playerTarget);
+            newGhost.Position = Position;
         }
         else
         {

@@ -1,15 +1,17 @@
 using Godot;
-using System;
 
-namespace shootem;
+namespace Shootemmono.scripts.Entities;
 public partial class Bullet : CharacterBody2D
 {
     [Export]
-    public float DespawnInNSeconds = 3;
+    public float DespawnInNSeconds = 1.5f;
 
     [Export]
     public float Speed = 250.0f;
 
+    [Export] public float Damage = 25.0f;
+
+    private Player _shooter;
     private Sprite2D _sprite;
     private CollisionShape2D _shape;
     private Timer _timer;
@@ -42,15 +44,15 @@ public partial class Bullet : CharacterBody2D
     {
         switch (_direction)
         {
-            case Vector2(-1, 0):
+            case (-1, 0):
                 _sprite.FlipH = true;
                 break;
-            case Vector2(1, 0):
+            case (1, 0):
                 break;
-            case Vector2(0, -1):
+            case (0, -1):
                 _sprite.Rotation = Mathf.DegToRad(-90);
                 break;
-            case Vector2(0, 1):
+            case (0, 1):
                 _sprite.Rotation = Mathf.DegToRad(90);
                 break;
         }
@@ -63,9 +65,10 @@ public partial class Bullet : CharacterBody2D
         return this;
     } 
 
-    public void Setup(Vector2 direction, float sourceSpeed)
+    public void Setup(Vector2 direction, float sourceSpeed, CharacterBody2D shooter)
     {
-        this.SetDirection(direction)
+        SetDirection(direction)
+            .SetShooter(shooter)
             .SetSprite()
             .StartTimer();
         Velocity = direction * (Speed + sourceSpeed);
@@ -74,5 +77,16 @@ public partial class Bullet : CharacterBody2D
     private void OnDespawnTimeout()
     {
         QueueFree();
+    }
+
+    private Bullet SetShooter(CharacterBody2D player)
+    {
+        _shooter = player as Player;
+        return this;
+    }
+
+    public Player GetShooter()
+    {
+        return _shooter;
     }
 }
