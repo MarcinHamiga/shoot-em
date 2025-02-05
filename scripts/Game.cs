@@ -48,7 +48,7 @@ public partial class Game : Node
 
     private void NewGame()
     {
-        foreach (Node child in _entities.GetChildren())
+        foreach (var child in _entities.GetChildren())
         {
             child.QueueFree();
         }
@@ -63,7 +63,7 @@ public partial class Game : Node
 
     private void _AddPlayer()
     {
-        PackedScene playerScene = GD.Load<PackedScene>("res://scenes/player.tscn");
+        var playerScene = GD.Load<PackedScene>("res://scenes/player.tscn");
         _player = playerScene.Instantiate<Player>();
         _entities.AddChild(_player);
         _player.Position = new Vector2(256, 256);
@@ -71,11 +71,9 @@ public partial class Game : Node
 
     private void _OnGameOver()
     {
-        if (!_startingNewGame)
-        {
-            _startingNewGame = true;
-            CallDeferred(nameof(NewGame));
-        }
+        if (_startingNewGame) return;
+        _startingNewGame = true;
+        CallDeferred(nameof(NewGame));
     }
 
     private void _OnEnemyKilled(Ghost ghost, Bullet bullet)
